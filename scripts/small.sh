@@ -37,7 +37,7 @@ sudo zypper se -t pattern
 sudo zypper in -t pattern sap-hana
 
 # step2
-echo $Uri >> url.txt
+echo $Uri >> /tmp/url.txt
 
 cp -f /etc/waagent.conf /etc/waagent.conf.orig
 sedcmd="s/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g"
@@ -47,7 +47,7 @@ cp -f /etc/waagent.conf.new /etc/waagent.conf
 
 number="$(lsscsi [*] 0 0 4| cut -c2)"
 
-echo "logicalvols start" >> parameter.txt
+echo "logicalvols start" >> /tmp/parameter.txt
   hanavg1lun="$(lsscsi $number 0 0 3 | grep -o '.\{9\}$')"
   hanavg2lun="$(lsscsi $number 0 0 4 | grep -o '.\{9\}$')"
   pvcreate $hanavg1lun $hanavg2lun
@@ -56,11 +56,11 @@ echo "logicalvols start" >> parameter.txt
   lvcreate -l 20%VG -n loglv hanavg
   mkfs.xfs /dev/hanavg/datalv
   mkfs.xfs /dev/hanavg/loglv
-echo "logicalvols end" >> parameter.txt
+echo "logicalvols end" >> /tmp/parameter.txt
 
 
 #!/bin/bash
-echo "logicalvols2 start" >> parameter.txt
+echo "logicalvols2 start" >> /tmp/parameter.txt
   sharedvglun="$(lsscsi $number 0 0 0 | grep -o '.\{9\}$')"
   usrsapvglun="$(lsscsi $number 0 0 1 | grep -o '.\{9\}$')"
   backupvglun="$(lsscsi $number 0 0 2 | grep -o '.\{9\}$')"
@@ -74,26 +74,26 @@ echo "logicalvols2 start" >> parameter.txt
   mkfs -t xfs /dev/sharedvg/sharedlv 
   mkfs -t xfs /dev/backupvg/backuplv 
   mkfs -t xfs /dev/usrsapvg/usrsaplv
-echo "logicalvols2 end" >> parameter.txt
+echo "logicalvols2 end" >> /tmp/parameter.txt
 
 
 #!/bin/bash
-echo "mounthanashared start" >> parameter.txt
+echo "mounthanashared start" >> /tmp/parameter.txt
 mount -t xfs /dev/sharedvg/sharedlv /hana/shared
 mount -t xfs /dev/backupvg/backuplv /hana/backup 
 mount -t xfs /dev/usrsapvg/usrsaplv /usr/sap
 mount -t xfs /dev/hanavg/datalv /hana/data
 mount -t xfs /dev/hanavg/loglv /hana/log 
 mkdir /hana/data/sapbits
-echo "mounthanashared end" >> parameter.txt
+echo "mounthanashared end" >> /tmp/parameter.txt
 
-echo "write to fstab start" >> parameter.txt
+echo "write to fstab start" >> /tmp/parameter.txt
 echo "/dev/mapper/hanavg-datalv /hana/data xfs defaults 0 0" >> /etc/fstab
 echo "/dev/mapper/hanavg-loglv /hana/log xfs defaults 0 0" >> /etc/fstab
 echo "/dev/mapper/sharedvg-sharedlv /hana/shared xfs defaults 0 0" >> /etc/fstab
 echo "/dev/mapper/backupvg-backuplv /hana/backup xfs defaults 0 0" >> /etc/fstab
 echo "/dev/mapper/usrsapvg-usrsaplv /usr/sap xfs defaults 0 0" >> /etc/fstab
-echo "write to fstab end" >> parameter.txt
+echo "write to fstab end" >> /tmp/parameter.txt
 
 if [ ! -d "/hana/data/sapbits" ]
  then
@@ -104,25 +104,25 @@ fi
 
 #!/bin/bash
 cd /hana/data/sapbits
-echo "hana download start" >> parameter.txt
+echo "hana download start" >> /tmp/parameter.txt
 /usr/bin/wget --quiet $Uri/SaPBits/md5sums
 /usr/bin/wget --quiet $Uri/SaPBits/51052325_part1.exe
 /usr/bin/wget --quiet $Uri/SaPBits/51052325_part2.rar
 /usr/bin/wget --quiet $Uri/SaPBits/51052325_part3.rar
 /usr/bin/wget --quiet $Uri/SaPBits/51052325_part4.rar
 /usr/bin/wget --quiet "https://raw.githubusercontent.com/AdamBJ/SAP-HANA-ARM/master/hdbinst.cfg"
-echo "hana download end" >> parameter.txt
+echo "hana download end" >> /tmp/parameter.txt
 
-date >> testdate
+date >> /tmp/testdate
 cd /hana/data/sapbits
 
-echo "hana unrar start" >> parameter.txt
+echo "hana unrar start" >> /tmp/parameter.txt
 #!/bin/bash
 cd /hana/data/sapbits
 unrar x 51052325_part1.exe
-echo "hana unrar end" >> parameter.txt
+echo "hana unrar end" >> /tmp/parameter.txt
 
-echo "hana prepare start" >> parameter.txt
+echo "hana prepare start" >> /tmp/parameter.txt
 cd /hana/data/sapbits
 
 #!/bin/bash
@@ -135,12 +135,12 @@ sedcmd4="s/root_password=AweS0me@PW/root_password=$HANAPWD/g"
 sedcmd5="s/sid=H10/sid=$HANASID/g"
 sedcmd6="s/number=00/number=$HANANUMBER/g"
 cat hdbinst.cfg | sed $sedcmd | sed $sedcmd2 | sed $sedcmd3 | sed $sedcmd4 | sed $sedcmd5 | sed $sedcmd6 > hdbinst-local.cfg
-echo "hana preapre end" >> parameter.txt
+echo "hana preapre end" >> /tmp/parameter.txt
 
 #!/bin/bash
-echo "install hana start" >> parameter.txt
+echo "install hana start" >> /tmp/parameter.txt
 cd /hana/data/sapbits/51052325/DATA_UNITS/HDB_LCM_LINUX_X86_64
 /hana/data/sapbits/51052325/DATA_UNITS/HDB_LCM_LINUX_X86_64/hdblcm -b --configfile /hana/data/sapbits/hdbinst-local.cfg
-echo "install hana end" >> parameter.txt
+echo "install hana end" >> /tmp/parameter.txt
 
 shutdown -r 1
