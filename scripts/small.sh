@@ -5,7 +5,7 @@ HANASID=$4
 HANANUMBER=$5
 vmSize=$6
 
-sudo su root
+#sudo su root
 
 #install hana prereqs
 sudo zypper install -y glibc-2.22-51.6
