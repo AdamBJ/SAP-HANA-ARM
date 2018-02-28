@@ -31,9 +31,9 @@
   },
     "variables": {
         "subnetRef": "[parameters('mgmtSubnetRef')]",
-        "vmName": "HNC_WS2016DS",
-        "vNicName": "HNC_WS2016DSnic",
-        "PIPName": "HNC_WS2016DSpip",
+        "vmName": "HNC_WS2016DC",
+        "vNicName": "HNC_WS2016DCnic",
+        "PIPName": "HNC_WS2016DCpip",
         "vhdStorageAccountName": "[uniqueString(resourceGroup().id, 'storage')]",
         "scriptFolder": ".",
         "scriptFileName": "hanastudio.ps1",
