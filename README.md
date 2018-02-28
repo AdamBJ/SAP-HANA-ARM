@@ -29,9 +29,9 @@ Installation media for SAP HANA should be downloaded and placed in the SapBits f
 Addtionally, if you wish to install a HANA Jumpbox with HANA Studio enabled, create a SAP_HANA_STUDIO folder under your SapBits folder and place the following packages:
 ```
 
-IMC_STUDIO2_212_2-80000323.SAR
+IMC_STUDIO2_223_0-80000353.SAR
 sapcar.exe
-serverjre-9.0.1_windows-x64_bin.tar.gz
+serverjre-9.0.4_windows-x64_bin.tar.gz
 
 ```
 
