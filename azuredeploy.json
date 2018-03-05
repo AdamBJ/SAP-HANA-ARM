@@ -164,6 +164,7 @@
     "resources": [
 
         {
+        "comments": "Each node in the resources array represents a resource that gets deployed to Azure *conditionally*. Look at the 'condition' node to determine what the condition is.",
         "condition": "[equals(parameters('ExistingNetworkResourceGroup'), 'no')]",
         "apiVersion": "2016-09-01",
         "type": "Microsoft.Network/virtualNetworks",
