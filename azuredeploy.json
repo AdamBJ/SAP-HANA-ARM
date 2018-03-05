@@ -37,7 +37,7 @@
         },
         "NetworkName": {
             "type": "string",
-            "defaultValue": "ra-sap-hana-vnet",
+            "defaultValue": "ra-sap-hana-vnetzzz",
             "metadata": {
                 "description": "The HANA VNET"
             }
